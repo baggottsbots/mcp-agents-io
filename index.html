@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+
+<!-- SEO Meta Tags -->
+<title>mcp-agents.io — The runtime for AI agents</title>
+<meta property="og:title" content="mcp-agents.io — The runtime for AI agents" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="mcp-agents.io — The runtime for AI agents" />
+<!-- End SEO Meta Tags -->
+
+<script data-field-replace>
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var fields={};
+  var paramMap={
+    'first_name':'firstName','last_name':'lastName','full_name':'fullName',
+    'email':'email','phone':'phone','company':'company',
+    'city':'city','state':'state','country':'country'
+  };
+  var skipTags={'SCRIPT':1,'STYLE':1,'NOSCRIPT':1,'TEXTAREA':1,'CODE':1,'PRE':1};
+  var hasUrlFields=false;
+  for(var p in paramMap){
+    var v=params.get(p);
+    if(v){fields[paramMap[p]]=v;hasUrlFields=true;}
+  }
+  var contactId=params.get('contact_id');
+  function esc(s){
+    if(!s)return s;
+    var d=document.createElement('div');
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
+  }
+  function doReplace(data){
+    var r={};
+    r['{{full_name}}']=esc(((data.firstName||'')+' '+(data.lastName||'')).trim()||((data.fullName||data.name)||''));
+    r['{{first_name}}']=esc(data.firstName||(data.name?data.name.split(' ')[0]:'')||'');
+    r['{{last_name}}']=esc(data.lastName||(data.name&&data.name.indexOf(' ')>-1?data.name.substring(data.name.indexOf(' ')+1):'')||'');
+    r['{{email}}']=esc(data.email||'');
+    r['{{phone}}']=esc(data.phone||'');
+    r['{{company}}']=esc(data.company||'');
+    r['{{city}}']=esc(data.city||'');
+    r['{{state}}']=esc(data.state||'');
+    r['{{country}}']=esc(data.country||'');
+    r['{{date}}']=new Date().toLocaleDateString();
+    r['{{time}}']=new Date().toLocaleTimeString();
+    r['{{location}}']=[data.city,data.state,data.country].filter(Boolean).join(', ');
+    r['{{tracking_id}}']=esc(data.trackingId||'');
+    r['{{lastClickedProduct}}']=esc(data.lastClickedProduct||'');
+    r['{{lastProductClickDate}}']=esc(data.lastProductClickDate||'');
+    r['{{lastClickedProductPrice}}']=esc(data.lastClickedProductPrice||'');
+    r['{{lastClickedProductURL}}']=esc(data.lastClickedProductURL||'');
+    r['{{productsClickedCount}}']=esc(data.productsClickedCount||'0');
+    r['{{ip_address}}']=esc(data.ipAddress||'');
+    r['{{ip}}']=esc(data.ipAddress||'');
+    if(data.customFields){
+      for(var k in data.customFields){
+        r['{{'+k+'}}']=esc(String(data.customFields[k]||''));
+      }
+    }
+    params.forEach(function(v,k){
+      if(!paramMap[k]&&k!=='contact_id'&&k!=='page_id'&&k.indexOf('utm_')!==0){
+        r['{{'+k+'}}']=esc(v);
+      }
+    });
+    var hasValues=false;
+    for(var key in r){if(r[key]){hasValues=true;break;}}
+    if(!hasValues)return;
+    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(n){
+        var p=n.parentNode;
+        if(p&&skipTags[p.nodeName])return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var node;
+    while(node=walker.nextNode()){
+      var txt=node.nodeValue;
+      if(txt&&txt.indexOf('{{')>-1){
+        var changed=txt;
+        for(var ph in r){
+          if(r[ph]&&changed.indexOf(ph)>-1){
+            changed=changed.split(ph).join(r[ph]);
+          }
+        }
+        if(changed!==txt)node.nodeValue=changed;
+      }
+    }
+    var attrs=['value','placeholder','content','alt','title'];
+    attrs.forEach(function(attr){
+      var els=document.querySelectorAll('['+attr+'*="{{"]');
+      for(var i=0;i<els.length;i++){
+        var tag=els[i].tagName;
+        if(skipTags[tag])continue;
+        var val=els[i].getAttribute(attr);
+        if(val){
+          var nv=val;
+          for(var ph in r){
+            if(r[ph]&&nv.indexOf(ph)>-1){
+              nv=nv.split(ph).join(r[ph]);
+            }
+          }
+          if(nv!==val)els[i].setAttribute(attr,nv);
+        }
+      }
+    });
+  }
+  function run(){
+    if(contactId){
+      var xhr=new XMLHttpRequest();
+      xhr.open('GET','https://paymegpt.com/api/landing/context/'+encodeURIComponent(contactId)+'?page_id=3513');
+      xhr.onload=function(){
+        if(xhr.status===200){
+          try{
+            var resp=JSON.parse(xhr.responseText);
+            if(resp.success&&resp.contact){
+              var merged=resp.contact;
+              for(var k in fields){merged[k]=fields[k];}
+              doReplace(merged);
+              return;
+            }
+          }catch(e){}
+        }
+        if(hasUrlFields)doReplace(fields);
+      };
+      xhr.onerror=function(){if(hasUrlFields)doReplace(fields);};
+      xhr.send();
+    }else if(hasUrlFields){
+      doReplace(fields);
+    }
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',run);}
+  else{run();}
+})();
+</script>
+<script data-payment>
+(function(){
+  var slug='gbJdUNGq';
+  var apiBase='https://paymegpt.com';
+  function findEmail(){
+    var ids=['email','emailAddress','buyer-email','buyerEmail','user-email','userEmail','checkout-email','customer-email','contact-email'];
+    for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el&&el.value&&el.value.includes('@'))return el.value.trim();}
+    var inputs=document.querySelectorAll('input[type="email"],input[name*="email"],input[placeholder*="email"],input[placeholder*="Email"]');
+    for(var j=0;j<inputs.length;j++){if(inputs[j].value&&inputs[j].value.includes('@'))return inputs[j].value.trim();}
+    return '';
+  }
+  function findName(){
+    var ids=['name','fullName','full-name','buyer-name','buyerName','customer-name','userName','user-name'];
+    for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el&&el.value)return el.value.trim();}
+    var inputs=document.querySelectorAll('input[name*="name"]:not([name*="email"]):not([type="email"]),input[placeholder*="name"]:not([placeholder*="email"]):not([type="email"]),input[placeholder*="Name"]:not([type="email"])');
+    for(var j=0;j<inputs.length;j++){if(inputs[j].value)return inputs[j].value.trim();}
+    return '';
+  }
+  var __realProcessPayment=function(a,b,c,d,e){
+    var amountCents,email,productName,productDescription,customerName,quantity;
+    if(a&&typeof a==='object'){
+      amountCents=a.amountCents;email=a.email;productName=a.productName;
+      productDescription=a.productDescription||'';customerName=a.name||'';quantity=a.quantity||1;
+    }else{
+      amountCents=typeof a==='number'?a:0;productName=typeof b==='string'?b:'';
+      productDescription=typeof c==='string'?c:'';email='';customerName='';quantity=1;
+    }
+    if(!email)email=findEmail();
+    if(!customerName)customerName=findName();
+    if(!productName){alert('Product name is required.');return Promise.reject('no_product_name');}
+    if(!amountCents||amountCents<100){alert('Amount must be at least $1.00');return Promise.reject('invalid_amount');}
+    if(!email){alert('Please enter your email address.');return Promise.reject('no_email');}
+    var successBase=window.location.href.split('?')[0];
+    return fetch(apiBase+'/api/landing-pages/public/'+slug+'/payment/checkout',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,name:customerName,amountCents:amountCents,productName:productName,productDescription:productDescription,quantity:quantity,successUrl:successBase+'?payment=success&product='+encodeURIComponent(productName)+'&session_id={CHECKOUT_SESSION_ID}',cancelUrl:successBase+'?payment=cancelled'})
+    }).then(function(r){return r.json();}).then(function(d){
+      if(d.checkoutUrl){window.location.href=d.checkoutUrl;}
+      else{alert(d.error||'Failed to process payment');throw new Error(d.error);}
+    });
+  };
+  Object.defineProperty(window,'__processPayment',{value:__realProcessPayment,writable:false,configurable:false});
+  document.addEventListener('DOMContentLoaded',function(){
+    var urlParams=new URLSearchParams(window.location.search);
+    if(urlParams.get('payment')==='success'){
+      var pName=urlParams.get('product')||'your item';
+      var overlay=document.createElement('div');overlay.id='payment-success-overlay';
+      overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999999;font-family:system-ui,-apple-system,sans-serif;';
+      overlay.innerHTML='<div style="background:white;border-radius:16px;padding:40px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);"><div style="width:64px;height:64px;border-radius:50%;background:#dcfce7;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><h2 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#111827;">Payment Successful!</h2><p style="margin:0 0 24px;color:#6b7280;font-size:16px;">Thank you for purchasing '+pName.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'.</p><button onclick="document.getElementById(\'payment-success-overlay\').remove();window.history.replaceState({},\'\',window.location.pathname);" style="padding:12px 32px;font-size:16px;font-weight:600;background:#16a34a;color:white;border:none;border-radius:8px;cursor:pointer;">Continue</button></div>';
+      document.body.appendChild(overlay);
+    }
+  });
+})();
+</script>  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="grain"></div>
+<div class="scanline"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<nav><div class="wrap nav-inner">
+  <div class="logo"><div class="logo-mark"></div><div class="logo-text">MCP-AGENTS.IO</div></div>
+  <div class="nav-links"><a href="#agents">Agents</a><a href="#protocol">Protocol</a><a href="#tools">Tools</a><a href="#docs">Docs</a></div>
+  <div class="nav-right"><div class="status"><div class="status-dot"></div><span>NETWORK ONLINE</span></div><a href="#" class="btn btn-primary">DEPLOY →</a></div>
+</div></nav>
+<section class="hero"><div class="wrap"><div class="hero-grid">
+  <div class="hero-meta">
+    <div class="meta-block"><div class="meta-label">// SYSTEM</div><div class="meta-value" id="timestamp">—</div></div>
+    <div class="meta-block"><div class="meta-label">// VERSION</div><div class="meta-value">v2.1.0 — STABLE</div></div>
+    <div class="meta-block"><div class="meta-label">// UPTIME</div><div class="meta-value">847 days, 04:22:19</div></div>
+    <div class="meta-block"><div class="meta-label">// ACTIVE AGENTS</div><div class="meta-big" id="agentCount">2,847,193</div></div>
+  </div>
+  <div>
+    <div class="badge"><div class="badge-dot"></div>MODEL CONTEXT PROTOCOL · NATIVE</div>
+    <h1 class="hero-title">Agents that<br /><em>actually ship.</em></h1>
+    <p class="hero-sub">The open runtime for building, deploying, and orchestrating AI agents over MCP. Connect any model to any tool. Run anywhere. Own your stack.</p>
+    <div class="hero-ctas"><a href="#" class="btn btn-primary btn-lg">START BUILDING →</a><a href="#" class="btn btn-ghost btn-lg">npx mcp-agents init</a></div>
+    <div class="terminal">
+      <div class="terminal-head"><div class="terminal-dots"><span></span><span></span><span></span></div><span>~/agent-runtime — 80×24</span><span>bash</span></div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> <span class="cmd">mcp deploy ./orchestrator</span></div>
+        <div class="log">→ compiling agent graph...</div>
+        <div class="log">→ connecting 12 MCP servers...</div>
+        <div class="log">→ validating tool schemas (118 tools)</div>
+        <div class="ok">✓ agent deployed — edge://us-east-1</div>
+        <div class="ok">✓ endpoint: https://api.mcp-agents.io/orch-7a2</div>
+        <div><span class="prompt">$</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+<div class="ticker-wrap"><div class="ticker">
+  <span class="alt">◆ 2.84M AGENTS DEPLOYED</span><span class="neu">◆ 118 TOOLS AVAILABLE</span><span class="alt">◆ 47ms MEDIAN LATENCY</span><span class="neu">◆ OPEN SOURCE · MIT</span><span class="alt">◆ MCP v1.2 COMPLIANT</span><span class="neu">◆ 99.98% UPTIME</span><span class="alt">◆ MODEL AGNOSTIC</span><span class="neu">◆ SELF-HOSTABLE</span>
+  <span class="alt">◆ 2.84M AGENTS DEPLOYED</span><span class="neu">◆ 118 TOOLS AVAILABLE</span><span class="alt">◆ 47ms MEDIAN LATENCY</span><span class="neu">◆ OPEN SOURCE · MIT</span><span class="alt">◆ MCP v1.2 COMPLIANT</span><span class="neu">◆ 99.98% UPTIME</span><span class="alt">◆ MODEL AGNOSTIC</span><span class="neu">◆ SELF-HOSTABLE</span>
+</div></div>
+<section id="agents"><div class="wrap">
+  <div class="section-head">
+    <div><div class="section-label">// REGISTRY_01</div><h2 class="section-title">Pre-built <em>agents</em><br />or roll your own.</h2></div>
+    <p class="section-sub">Every agent is a first-class runtime primitive with its own tools, memory, and scope. Compose them like functions. Scale them like services.</p>
+  </div>
+  <div class="agents-grid">
+    <div class="network-viz"><div class="viz-label">AGENT_MESH · LIVE</div><canvas id="meshCanvas"></canvas><div class="viz-footer"><span>NODES: 28</span><span>EDGES: ACTIVE</span><span>LAT: 47ms</span></div></div>
+    <div class="agent-list" id="agentList"></div>
+  </div>
+</div></section>
+<section id="protocol" class="protocol-section"><div class="wrap">
+  <div class="section-head">
+    <div><div class="section-label">// PROTOCOL_02</div><h2 class="section-title">Built on the <em>Model Context Protocol</em>.</h2></div>
+    <p class="section-sub">MCP is the open standard for connecting AI models to tools and data. We're the runtime layer that makes it production-ready.</p>
+  </div>
+  <div class="protocol-grid">
+    <div class="protocol-card"><div class="protocol-num">01</div><div class="protocol-title">Universal tool bus</div><div class="protocol-desc">Any MCP server works. Any model works. Switch providers without rewriting agents.</div></div>
+    <div class="protocol-card"><div class="protocol-num">02</div><div class="protocol-title">Streaming-first runtime</div><div class="protocol-desc">Bidirectional streaming between agents and tools. Real-time by default.</div></div>
+    <div class="protocol-card"><div class="protocol-num">03</div><div class="protocol-title">Observability baked in</div><div class="protocol-desc">Every tool call, token, and handoff traced. Debug agent behavior like a pro.</div></div>
+    <div class="protocol-card"><div class="protocol-num">04</div><div class="protocol-title">Self-host or managed</div><div class="protocol-desc">Deploy to our edge or your own infra. Your choice, your data.</div></div>
+  </div>
+</div></section>
+<section><div class="wrap"><div class="code-grid">
+  <div>
+    <div class="section-label">// INTERFACE_03</div>
+    <h2 class="section-title">A spec, not a <em>framework.</em></h2>
+    <p class="section-sub" style="margin-top: 1.5rem;">Define agents declaratively. We handle the runtime, the retries, the rate limits, and the long-running execution.</p>
+    <div class="features"><div>Works with Claude, GPT, Gemini, Grok, Llama</div><div>TypeScript &amp; Python SDKs</div><div>Zero vendor lock-in</div><div>MIT licensed core</div></div>
+  </div>
+  <div class="code-block">
+    <div class="code-tabs"><div class="tab active">agent.ts</div><div class="tab">config.yaml</div><div class="tab">tools.json</div></div>
+<pre><span class="kw">import</span> { defineAgent, mcp } <span class="kw">from</span> <span class="str">'@mcp-agents/core'</span>;
+
+<span class="kw">export default</span> <span class="fn">defineAgent</span>({
+  name: <span class="str">'research-orchestrator'</span>,
+  model: <span class="str">'claude-opus-4-7'</span>,
+
+  tools: [
+    mcp.<span class="fn">connect</span>(<span class="str">'https://tools.example.com/mcp'</span>),
+    mcp.<span class="fn">connect</span>(<span class="str">'stdio://./local-tools'</span>),
+  ],
+
+  system: <span class="str">`You coordinate research across sub-agents.
+Delegate, synthesize, cite sources.`</span>,
+
+  subAgents: {
+    crawler: <span class="str">'./agents/crawler'</span>,
+    scribe:  <span class="str">'./agents/scribe'</span>,
+  },
+
+  memory: { kind: <span class="str">'episodic'</span>, ttl: <span class="str">'7d'</span> },
+  trace:  { sample: <span class="kw">1.0</span> },
+});</pre>
+  </div>
+</div></div></section>
+<section id="tools" class="tools-section"><div class="wrap">
+  <div class="section-head">
+    <div><div class="section-label">// TOOLCHAIN_04</div><h2 class="section-title"><em>118+</em> tools.<br />Growing daily.</h2></div>
+    <p class="section-sub">Curated MCP servers across every domain your agents need. One handshake, full access.</p>
+  </div>
+  <div class="tools-grid" id="toolsGrid"></div>
+</div></section>
+<section><div class="wrap"><div class="stats-grid">
+  <div class="stat"><div class="stat-n">2.84M</div><div class="stat-label">Agents deployed</div><div class="stat-sub">+12.4% THIS WEEK</div></div>
+  <div class="stat"><div class="stat-n">118</div><div class="stat-label">MCP tools integrated</div><div class="stat-sub">UPDATED DAILY</div></div>
+  <div class="stat"><div class="stat-n">47ms</div><div class="stat-label">P50 tool-call latency</div><div class="stat-sub">GLOBAL EDGE</div></div>
+  <div class="stat"><div class="stat-n">99.98%</div><div class="stat-label">Runtime uptime</div><div class="stat-sub">90-DAY ROLLING</div></div>
+</div></div></section>
+<section class="cta-section"><div class="wrap">
+  <div class="section-label">// READY_TO_SHIP</div>
+  <h2 class="cta-title">Build the agent<br /><em>you actually want.</em></h2>
+  <p class="cta-sub">Free tier forever. No credit card. Deploy your first agent in under 60 seconds.</p>
+  <div class="cta-ctas"><a href="#" class="btn btn-primary btn-lg">DEPLOY FIRST AGENT →</a><a href="#" class="btn btn-ghost btn-lg">READ THE DOCS</a></div>
+</div></section>
+<footer><div class="wrap">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="logo"><div class="logo-mark" style="width:24px; height:24px;"></div><div class="logo-text">MCP-AGENTS.IO</div></div><p>The open runtime for AI agents over Model Context Protocol.</p></div>
+    <div class="footer-col"><h4>// PLATFORM</h4><ul><li><a href="#">Agents</a></li><li><a href="#">Tools</a></li><li><a href="#">Runtime</a></li><li><a href="#">Observability</a></li></ul></div>
+    <div class="footer-col"><h4>// DEVELOPERS</h4><ul><li><a href="#">Docs</a></li><li><a href="#">GitHub</a></li><li><a href="#">SDK</a></li><li><a href="#">Examples</a></li></ul></div>
+    <div class="footer-col"><h4>// COMPANY</h4><ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><div>© 2026 MCP-AGENTS.IO · MIT LICENSED</div><div style="display:flex; gap:1.5rem;"><span>STATUS: ALL SYSTEMS NOMINAL</span><span class="version">v2.1.0</span></div></div>
+</div></footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
