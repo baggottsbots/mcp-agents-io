@@ -39,8 +39,8 @@ function draw() {
   const rect = canvas.getBoundingClientRect();
   ctx.clearRect(0,0,rect.width,rect.height);
   nodes.forEach(n => { n.x+=n.vx; n.y+=n.vy; n.pulse+=0.03; if(n.x<0||n.x>rect.width)n.vx*=-1; if(n.y<0||n.y>rect.height)n.vy*=-1; });
-  for (let i=0;i<nodes.length;i++) for (let j=i+1;j<nodes.length;j++) { const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y, dist=Math.sqrt(dx*dx+dy*dy); if(dist<140){const op=(1-dist/140)*0.35; ctx.strokeStyle=`rgba(54,214,181,${op})`; ctx.lineWidth=0.6; ctx.beginPath(); ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke();} }
-  nodes.forEach(n => { const g = Math.sin(n.pulse)*0.5+0.5; ctx.fillStyle=`rgba(54,214,181,${0.4+g*0.6})`; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill(); ctx.fillStyle=`rgba(54,214,181,${0.1*g})`; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*4,0,Math.PI*2); ctx.fill(); });
+  for (let i=0;i<nodes.length;i++) for (let j=i+1;j<nodes.length;j++) { const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y, dist=Math.sqrt(dx*dx+dy*dy); if(dist<140){const op=(1-dist/140)*0.35; ctx.strokeStyle=`rgba(255,61,138,${op})`; ctx.lineWidth=0.6; ctx.beginPath(); ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke();} }
+  nodes.forEach(n => { const g = Math.sin(n.pulse)*0.5+0.5; ctx.fillStyle=`rgba(255,61,138,${0.4+g*0.6})`; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill(); ctx.fillStyle=`rgba(255,61,138,${0.1*g})`; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*4,0,Math.PI*2); ctx.fill(); });
   requestAnimationFrame(draw);
 }
 draw();
