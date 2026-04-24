@@ -201,12 +201,12 @@
 <div class="grain"></div>
 <div class="scanline"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
-<nav><div class="wrap nav-inner">
+<nav data-section="navbar"><div class="wrap nav-inner">
   <div class="logo"><div class="logo-mark"></div><div class="logo-text">MCP-AGENTS.IO</div></div>
   <div class="nav-links"><a href="#agents">Agents</a><a href="#protocol">Protocol</a><a href="#tools">Tools</a><a href="#docs">Docs</a></div>
   <div class="nav-right"><div class="status"><div class="status-dot"></div><span>NETWORK ONLINE</span></div><a href="#" class="btn btn-primary">DEPLOY →</a></div>
 </div></nav>
-<section class="hero"><div class="wrap"><div class="hero-grid">
+<section data-section="hero" class="hero"><div class="wrap"><div class="hero-grid">
   <div class="hero-meta">
     <div class="meta-block"><div class="meta-label">// SYSTEM</div><div class="meta-value" id="timestamp">—</div></div>
     <div class="meta-block"><div class="meta-label">// VERSION</div><div class="meta-value">v2.1.0 — STABLE</div></div>
@@ -232,11 +232,11 @@
     </div>
   </div>
 </div></div></section>
-<div class="ticker-wrap"><div class="ticker">
+<div data-section="ticker" class="ticker-wrap"><div class="ticker">
   <span class="alt">◆ 2.84M AGENTS DEPLOYED</span><span class="neu">◆ 118 TOOLS AVAILABLE</span><span class="alt">◆ 47ms MEDIAN LATENCY</span><span class="neu">◆ OPEN SOURCE · MIT</span><span class="alt">◆ MCP v1.2 COMPLIANT</span><span class="neu">◆ 99.98% UPTIME</span><span class="alt">◆ MODEL AGNOSTIC</span><span class="neu">◆ SELF-HOSTABLE</span>
   <span class="alt">◆ 2.84M AGENTS DEPLOYED</span><span class="neu">◆ 118 TOOLS AVAILABLE</span><span class="alt">◆ 47ms MEDIAN LATENCY</span><span class="neu">◆ OPEN SOURCE · MIT</span><span class="alt">◆ MCP v1.2 COMPLIANT</span><span class="neu">◆ 99.98% UPTIME</span><span class="alt">◆ MODEL AGNOSTIC</span><span class="neu">◆ SELF-HOSTABLE</span>
 </div></div>
-<section id="agents"><div class="wrap">
+<section data-section="agents" id="agents"><div class="wrap">
   <div class="section-head">
     <div><div class="section-label">// REGISTRY_01</div><h2 class="section-title">Pre-built <em>agents</em><br />or roll your own.</h2></div>
     <p class="section-sub">Every agent is a first-class runtime primitive with its own tools, memory, and scope. Compose them like functions. Scale them like services.</p>
@@ -246,7 +246,7 @@
     <div class="agent-list" id="agentList"></div>
   </div>
 </div></section>
-<section id="protocol" class="protocol-section"><div class="wrap">
+<section data-section="protocol" id="protocol" class="protocol-section"><div class="wrap">
   <div class="section-head">
     <div><div class="section-label">// PROTOCOL_02</div><h2 class="section-title">Built on the <em>Model Context Protocol</em>.</h2></div>
     <p class="section-sub">MCP is the open standard for connecting AI models to tools and data. We're the runtime layer that makes it production-ready.</p>
@@ -258,7 +258,7 @@
     <div class="protocol-card"><div class="protocol-num">04</div><div class="protocol-title">Self-host or managed</div><div class="protocol-desc">Deploy to our edge or your own infra. Your choice, your data.</div></div>
   </div>
 </div></section>
-<section><div class="wrap"><div class="code-grid">
+<section data-section="interface"><div class="wrap"><div class="code-grid">
   <div>
     <div class="section-label">// INTERFACE_03</div>
     <h2 class="section-title">A spec, not a <em>framework.</em></h2>
@@ -291,26 +291,26 @@ Delegate, synthesize, cite sources.`</span>,
 });</pre>
   </div>
 </div></div></section>
-<section id="tools" class="tools-section"><div class="wrap">
+<section data-section="tools" id="tools" class="tools-section"><div class="wrap">
   <div class="section-head">
     <div><div class="section-label">// TOOLCHAIN_04</div><h2 class="section-title"><em>118+</em> tools.<br />Growing daily.</h2></div>
     <p class="section-sub">Curated MCP servers across every domain your agents need. One handshake, full access.</p>
   </div>
   <div class="tools-grid" id="toolsGrid"></div>
 </div></section>
-<section><div class="wrap"><div class="stats-grid">
+<section data-section="stats"><div class="wrap"><div class="stats-grid">
   <div class="stat"><div class="stat-n">2.84M</div><div class="stat-label">Agents deployed</div><div class="stat-sub">+12.4% THIS WEEK</div></div>
   <div class="stat"><div class="stat-n">118</div><div class="stat-label">MCP tools integrated</div><div class="stat-sub">UPDATED DAILY</div></div>
   <div class="stat"><div class="stat-n">47ms</div><div class="stat-label">P50 tool-call latency</div><div class="stat-sub">GLOBAL EDGE</div></div>
   <div class="stat"><div class="stat-n">99.98%</div><div class="stat-label">Runtime uptime</div><div class="stat-sub">90-DAY ROLLING</div></div>
 </div></div></section>
-<section class="cta-section"><div class="wrap">
+<section data-section="cta" class="cta-section"><div class="wrap">
   <div class="section-label">// READY_TO_SHIP</div>
   <h2 class="cta-title">Build the agent<br /><em>you actually want.</em></h2>
   <p class="cta-sub">Free tier forever. No credit card. Deploy your first agent in under 60 seconds.</p>
   <div class="cta-ctas"><a href="#" class="btn btn-primary btn-lg">DEPLOY FIRST AGENT →</a><a href="#" class="btn btn-ghost btn-lg">READ THE DOCS</a></div>
 </div></section>
-<footer><div class="wrap">
+<footer data-section="footer"><div class="wrap">
   <div class="footer-grid">
     <div class="footer-brand"><div class="logo"><div class="logo-mark" style="width:24px; height:24px;"></div><div class="logo-text">MCP-AGENTS.IO</div></div><p>The open runtime for AI agents over Model Context Protocol.</p></div>
     <div class="footer-col"><h4>// PLATFORM</h4><ul><li><a href="#">Agents</a></li><li><a href="#">Tools</a></li><li><a href="#">Runtime</a></li><li><a href="#">Observability</a></li></ul></div>
